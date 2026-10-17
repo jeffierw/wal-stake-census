@@ -68,10 +68,15 @@ export default async function Home() {
 }
 
 function Stat({ label, value }: { label: string; value: string }) {
+  const [whole, fraction] = value.split(".");
+  const grouped = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   return (
     <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
       <p className="text-xs text-zinc-400">{label}</p>
-      <p className="mt-1 break-all text-lg font-semibold leading-snug tabular-nums">{value}</p>
+      <p className="mt-1 text-lg font-semibold leading-snug tabular-nums">
+        {grouped}
+        {fraction ? <span className="block text-sm text-zinc-300">.{fraction}</span> : null}
+      </p>
     </div>
   );
 }
