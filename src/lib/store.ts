@@ -1,11 +1,12 @@
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { distributionFromLedger } from "./aggregate";
+import { addressIndexFromLedger, distributionFromLedger } from "./aggregate";
 import type { Distribution, Ledger } from "./types";
 
 export const DATA_DIR = path.join(process.cwd(), "data");
 export const LEDGER_PATH = path.join(DATA_DIR, "ledger.json");
 export const SNAPSHOT_PATH = path.join(DATA_DIR, "snapshot.json");
+export const ADDRESS_INDEX_PATH = path.join(DATA_DIR, "address-index.json");
 export const BOOTSTRAP_PATH = path.join(DATA_DIR, "bootstrap.json");
 export const STATE_PATH = path.join(DATA_DIR, "state.json");
 
@@ -37,5 +38,6 @@ export async function publish(
   if (persistObjects) await writeJsonAtomic(LEDGER_PATH, ledger);
   await writeJsonAtomic(STATE_PATH, { checkpoint: ledger.checkpoint });
   await writeJsonAtomic(SNAPSHOT_PATH, snapshot);
+  await writeJsonAtomic(ADDRESS_INDEX_PATH, addressIndexFromLedger(ledger));
   return snapshot;
 }

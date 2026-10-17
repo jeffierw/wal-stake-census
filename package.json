@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "tsx --test src/lib/aggregate.test.ts",
+    "test": "tsx --test src/lib/aggregate.test.ts src/lib/addresses.test.ts",
+    "republish": "tsx scripts/republish.ts",
     "bootstrap": "tsx scripts/bootstrap.ts",
     "follow": "tsx scripts/follow.ts"
   },

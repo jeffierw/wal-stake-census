@@ -15,6 +15,14 @@ export function parseMist(value: string): bigint {
   return BigInt(value);
 }
 
+export function formatWal(value: string): string {
+  const negative = value.startsWith("-");
+  const [whole, fraction] = (negative ? value.slice(1) : value).split(".");
+  const grouped = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const text = fraction ? `${grouped}.${fraction}` : grouped;
+  return negative ? `-${text}` : text;
+}
+
 export function mistToWal(mist: bigint): string {
   const negative = mist < 0n;
   const value = negative ? -mist : mist;

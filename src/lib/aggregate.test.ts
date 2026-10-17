@@ -24,9 +24,20 @@ test("同一地址的多笔本金先加总再分桶", () => {
   assert.equal(result.objectCount, 3);
   assert.equal(result.totalPrincipal, "10011");
   assert.equal(result.max, "10000");
-  assert.equal(result.buckets.find((row) => row.label === "10–20")?.count, 1);
-  assert.equal(result.buckets.find((row) => row.label === "10000+")?.count, 1);
-  assert.equal(result.states.Withdrawing, 1);
+  const ten = result.buckets.find((row) => row.label === "10–20");
+  const top = result.buckets.find((row) => row.label === "10000+");
+  assert.equal(ten?.count, 1);
+  assert.equal(ten?.principal, "11");
+  assert.equal(ten?.principalPercent, "0.11");
+  assert.equal(top?.count, 1);
+  assert.equal(top?.principal, "10000");
+  assert.equal(top?.principalPercent, "99.89");
+  assert.equal(result.states.Staked.addresses, 2);
+  assert.equal(result.states.Staked.objects, 2);
+  assert.equal(result.states.Staked.principal, "10006");
+  assert.equal(result.states.Withdrawing.addresses, 1);
+  assert.equal(result.states.Withdrawing.objects, 1);
+  assert.equal(result.states.Withdrawing.principal, "5");
   assert.equal(result.buckets.reduce((sum, row) => sum + Number(row.percent), 0), 100);
 });
 
@@ -57,8 +68,11 @@ test("对象主人不进入地址分桶", () => {
   );
   assert.equal(result.addressCount, 0);
   assert.equal(result.totalPrincipal, "0");
+  assert.equal(result.states.Staked.objects, 0);
+  assert.equal(result.states.Staked.principal, "0");
   assert.equal(result.objectOwned.totalPrincipal, "50");
   assert.equal(result.objectOwned.holderCount, 1);
+  assert.equal(result.objectOwned.objectCount, 1);
 });
 
 test("同一检查点的效果按顺序覆盖，重放结果不变", () => {

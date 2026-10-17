@@ -6,7 +6,8 @@
 
 - 数量是 `principal`，单位 WAL（1 WAL = 10^9 MIST），不含收益。
 - 同一地址的多笔对象先加总，再落入互斥区间。
-- `Staked` 和 `Withdrawing` 都计入。对象主人单独列出，不进地址分桶。
+- `Staked` 和 `Withdrawing` 都计入。区间表同时给出地址数和该区间的本金合计。
+- 对象主人单独列出，不进地址分桶。这些对象目前主要是交易市场挂单里的 dynamic field。
 
 ## 本地
 
@@ -20,4 +21,6 @@ npm run dev
 
 `bootstrap` 用 GraphQL 扫一遍存活对象，并记下快照检查点。`follow` 从该检查点之后用 gRPC 连续补洞并订阅新检查点。取回会在对应检查点把对象从账本删除。
 
-Vercel 只托管这个 Next.js 页面。常驻的 `follow` 不能跑在 Serverless 上，需要在一台长期在线的机器上运行，再把新的 `data/snapshot.json` 部署出去。
+页面可以按地址查询。查询读 `data/address-index.json`，和快照一起由 `publish` 写出。`POST /api/addresses`，正文是 `{ "addresses": ["0x..."] }`，一次最多 100 个。
+
+Vercel 只托管这个 Next.js 页面。常驻的 `follow` 不能跑在 Serverless 上，需要在一台长期在线的机器上运行，再把新的 `data/snapshot.json` 和 `data/address-index.json` 部署出去。本地账本还在时，可以用 `npm run republish` 只重写这两份派生文件。
