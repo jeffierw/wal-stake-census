@@ -16,5 +16,6 @@ next-env.d.ts
 # 全量对象账本由索引进程在本地生成，不进仓库。
 data/ledger.json
 data/bootstrap.json
+data/bootstrap-objects.jsonl
 data/state.json
 data/*.tmp
