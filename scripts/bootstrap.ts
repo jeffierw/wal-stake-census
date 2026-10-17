@@ -45,7 +45,7 @@ type Progress = {
 
 async function graphql(after: string | null): Promise<Page> {
   let lastError: unknown;
-  for (let attempt = 1; attempt <= 5; attempt += 1) {
+  for (let attempt = 1; attempt <= 8; attempt += 1) {
     try {
       const response = await fetch(GRAPHQL_URL, {
         method: "POST",
@@ -58,7 +58,10 @@ async function graphql(after: string | null): Promise<Page> {
       return body.data;
     } catch (error) {
       lastError = error;
-      await new Promise((resolve) => setTimeout(resolve, attempt * 1000));
+      if (attempt === 8) break;
+      const delay = Math.min(attempt * 2000, 15000);
+      console.warn(`GraphQL 第 ${attempt} 次失败，${delay}ms 后重试`);
+      await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
   throw lastError;
@@ -123,7 +126,7 @@ async function main() {
   }
 
   const ledger: Ledger = { checkpoint: checkpoint!, objects: await loadObjects() };
-  const snapshot = await publish(ledger, true);
+  const snapshot = await publish(ledger, false);
   console.log(
     `快照完成：检查点 ${snapshot.checkpoint}，地址 ${snapshot.addressCount}，总本金 ${snapshot.totalPrincipal} WAL`,
   );

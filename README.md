@@ -23,4 +23,6 @@ npm run dev
 
 页面可以按地址查询。查询读 `data/address-index.json`，和快照一起由 `publish` 写出。`POST /api/addresses`，正文是 `{ "addresses": ["0x..."] }`，一次最多 100 个。
 
-Vercel 只托管这个 Next.js 页面。常驻的 `follow` 不能跑在 Serverless 上，需要在一台长期在线的机器上运行，再把新的 `data/snapshot.json` 和 `data/address-index.json` 部署出去。本地账本还在时，可以用 `npm run republish` 只重写这两份派生文件。
+公网数据每天更新一次。GitHub Actions 在北京时间 08:00 重新扫描存活对象，把 `data/snapshot.json` 和 `data/address-index.json` 推到 `main`，Vercel 随后自动部署。定时任务在高峰时可能推迟。扫完的快照对应该次扫描开始时的检查点。
+
+Vercel 不能自己跑这趟扫描。`follow` 仍可以在一台长期在线的机器上把快照追到链头；本地账本还在时，可以用 `npm run republish` 只重写这两份派生文件。
